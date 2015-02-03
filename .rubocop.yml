@@ -1,22 +1,21 @@
 ---
-MethodLength:
+Metrics/MethodLength:
   Max: 200
 
-LineLength:
+Metrics/LineLength:
   Max: 160
 
-PerceivedComplexity:
+Metrics/PerceivedComplexity:
   Enabled: false
 
-CyclomaticComplexity:
+Metrics/CyclomaticComplexity:
   Enabled: false
 
-ClassLength:
+Metrics/ClassLength:
   Enabled: false
 
-Documentation:
+Style/IfUnlessModifier:
   Enabled: false
 
-IfUnlessModifier:
-  Enabled: false
-
+Style/IndentationWidth:
+  Width: 4
