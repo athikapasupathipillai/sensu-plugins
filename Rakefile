@@ -9,7 +9,7 @@ end
 
 desc 'Make all plugins executable'
 task :make_plugins_executable do
-  `chmod -R +x **/*.rb`
+  `chmod -R +x **/*.rb **/*.sh`
 end
 
 task default: [:spec, :make_plugins_executable, :rubocop]
