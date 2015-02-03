@@ -1,0 +1,5 @@
+Gemfile.lock
+.bundle
+vendor
+.vagrant/*
+*.gem
