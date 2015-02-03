@@ -1,6 +1,6 @@
 require 'date'
 Gem::Specification.new do |gem|
-  gem.name                  = 'sensu-community-plugins'
+  gem.name                  = 'sensu-oasis-plugins'
   gem.authors               = ['Oasiswork and contributors']
   gem.email                 = '<dev@oasiswork.fr>'
   gem.homepage              = 'https://github.com/oasis/sensu-plugins'
