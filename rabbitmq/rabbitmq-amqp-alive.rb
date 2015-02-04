@@ -95,10 +95,10 @@ class CheckRabbitAMQP < Sensu::Plugin::Check::CLI
     begin
       unknown 'Do not use --ssl and --tls options concurrently' if config[:ssl] && config[:tls]
       conn = Bunny.new("amqp#{ssl ? 's' : ''}://#{username}:#{password}@#{host}:#{port}/#{vhost}",
-                       :tls                => config[:tls],
-                       :tls_cert           => "#{config[:tls_crt]}",
-                       :tls_key            => "#{config[:tls_key]}",
-                       :tls_ca_certificate => "#{config[:tls_ca]}")
+                       :tls         => config[:tls],
+                       :tls_cert    => "#{config[:tls_crt]}",
+                       :tls_key     => "#{config[:tls_key]}",
+                       :verify_peer => false)
       conn.start
       { 'status' => 'ok', 'message' => 'RabbitMQ server is alive' }
     rescue Bunny::PossibleAuthenticationFailureError
