@@ -53,7 +53,7 @@ class CheckRabbitAMQP < Sensu::Plugin::Check::CLI
 
   option :tls_verify_peer,
          description: 'Verify peer certificate when connecting with SSL/TLS to RabbitMQ',
-         long: '--ssl',
+         long: '--tls-verify-peer',
          boolean: true,
          default: false
 
