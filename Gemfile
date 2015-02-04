@@ -7,3 +7,5 @@ gem "rest-client"
 gem "bunny"
 # check-redis-*
 gem "redis"
+# check-rbl
+gem "dnsbl-client"
