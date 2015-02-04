@@ -57,6 +57,11 @@ class CheckRabbitAMQP < Sensu::Plugin::Check::CLI
          boolean: true,
          default: false
 
+  option :tls_ca,
+         description: 'CA certificate for TLS connection to RabbitMQ',
+         long: '--tls-ca',
+         default: ''
+
   option :tls_crt,
          description: 'Client certificate for TLS connection to RabbitMQ',
          long: '--tls-crt',
@@ -90,10 +95,10 @@ class CheckRabbitAMQP < Sensu::Plugin::Check::CLI
     begin
       unknown 'Do not use --ssl and --tls options concurrently' if config[:ssl] && config[:tls]
       conn = Bunny.new("amqp#{ssl ? 's' : ''}://#{username}:#{password}@#{host}:#{port}/#{vhost}",
-                       :tls         => config[:tls],
-                       :tls_cert    => "#{config[:tls_crt]}",
-                       :tls_key     => "#{config[:tls_key]}",
-                       :verify_peer => false)
+                       :tls                => config[:tls],
+                       :tls_cert           => "#{config[:tls_crt]}",
+                       :tls_key            => "#{config[:tls_key]}",
+                       :tls_ca_certificate => "#{config[:tls_ca]}")
       conn.start
       { 'status' => 'ok', 'message' => 'RabbitMQ server is alive' }
     rescue Bunny::PossibleAuthenticationFailureError
