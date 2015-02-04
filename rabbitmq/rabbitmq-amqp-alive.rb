@@ -57,11 +57,6 @@ class CheckRabbitAMQP < Sensu::Plugin::Check::CLI
          boolean: true,
          default: false
 
-  option :tls_ca,
-         description: 'CA certificate for TLS connection to RabbitMQ',
-         long: '--tls-ca',
-         default: ''
-
   option :tls_crt,
          description: 'Client certificate for TLS connection to RabbitMQ',
          long: '--tls-crt',
