@@ -46,32 +46,10 @@ class CheckRabbitAMQP < Sensu::Plugin::Check::CLI
          default: '5672'
 
   option :ssl,
-         description: 'Enable SSL/TLS for connection to RabbitMQ',
+         description: 'Enable SSL for connection to RabbitMQ',
          long: '--ssl',
          boolean: true,
          default: false
-
-  option :tls_verify_peer,
-         description: 'Verify peer certificate when connecting with SSL/TLS to RabbitMQ',
-         long: '--tls-verify-peer',
-         boolean: true,
-         default: false
-
-  option :tls_ca_certs,
-         description: 'CA certificate(s) for SSL/TLS connection to RabbitMQ',
-         long: '--tls-crt PATH[,PATH]',
-         proc: proc { |a| a.split(',') }
-         default: ['']
-
-  option :tls_cert,
-         description: 'Client certificate for SSL/TLS connection to RabbitMQ',
-         long: '--tls-cert PATH',
-         default: ''
-
-  option :tls_key,
-         description: 'Client key for SSL/TLS connection to RabbitMQ',
-         long: '--tls-key PATH',
-         default: ''
 
   def run
     res = vhost_alive?
@@ -94,11 +72,7 @@ class CheckRabbitAMQP < Sensu::Plugin::Check::CLI
     ssl      = config[:ssl]
 
     begin
-      conn = Bunny.new("amqp#{ssl ? 's' : ''}://#{username}:#{password}@#{host}:#{port}/#{vhost}",
-                       :tls_cert => config[:tls_cert],
-                       :tls_key  => config[:tls_key],
-                       :tls_ca_certificates => config[:tls_ca_certs],
-                       :verify_peer => config[:tls_verify_peer])
+      conn = Bunny.new("amqp#{ssl ? 's' : ''}://#{username}:#{password}@#{host}:#{port}/#{vhost}")
       conn.start
       { 'status' => 'ok', 'message' => 'RabbitMQ server is alive' }
     rescue Bunny::PossibleAuthenticationFailureError
