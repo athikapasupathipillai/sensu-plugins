@@ -98,7 +98,7 @@ class CheckRabbitAMQP < Sensu::Plugin::Check::CLI
                        :tls                => config[:tls],
                        :tls_cert           => "#{config[:tls_crt]}",
                        :tls_key            => "#{config[:tls_key]}",
-                       :tls_ca_certificate => "#{config[:tls_ca]}")
+                       :tls_ca_certificates => "#{config[:tls_ca]}")
       conn.start
       { 'status' => 'ok', 'message' => 'RabbitMQ server is alive' }
     rescue Bunny::PossibleAuthenticationFailureError
