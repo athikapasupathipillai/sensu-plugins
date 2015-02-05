@@ -9,3 +9,5 @@ gem "bunny"
 gem "redis"
 # check-rbl
 gem "dnsbl-client"
+# check-zimbra-backup*. Need zlib1g-dev package and ruby-dev
+gem "nokogiri"
