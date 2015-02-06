@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# check-backup
+# check-zimbra-backup
 #
 # DESCRIPTION:
 # Check Zimbra Network Edition backup for Sensu.
@@ -16,7 +16,7 @@
 # gem: nokogiri
 #
 # USAGE:
-# check-backup [-d /path/to/backup/dir/]
+# check-zimbra-backup [-d /path/to/backup/dir/]
 #
 # NOTES:
 #
