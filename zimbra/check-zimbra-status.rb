@@ -24,7 +24,7 @@
 # Released under the same terms as Sensu (the MIT license); see LICENSE
 # for details.
 #
-# Authors:
+# AUTHORS:
 # Emeric MILLION <emillion@oasiswork.fr>
 # Nicolas BRISAC <nbrisac@oasiswork.fr>
 
@@ -39,13 +39,28 @@ class CheckZimbraStatus < Sensu::Plugin::Check::CLI
         # We remove the first line describing the host
         output = `su - zimbra -c '/opt/zimbra/bin/zmcontrol status'`.lines.to_a[1..-1]
         # Store statuses in a hash
-        status.each { |line|
-            service_name = line.split(/\s{2,}/)[0].strip
-            service_status = line.split(/\s{2,}/)[1].strip.upcase
+        service_name = ''
+        output.each { |line|
+            bits = line.split
+            if bits.length.between?(2, 3)
+                if bits.length == 2
+                    service_name = bits.first.strip
+                else
+                    service_name = bits.take(2).join('_')
+                end
+                service_status = bits.last.strip.upcase
+                status[service_name] = {}
+                status[service_name]['status'] = service_status
+                status[service_name]['details'] = []
+            else
+                status[service_name]['details'].push(line.strip)
+            end
+        }
+        puts(status)
 
-            status[service_name] = service_status
-            if service_status != "Running"
-                msg += "#{name} is #{service_status};"
+        status.each { |k,v|
+            if v['status'] != "RUNNING"
+                msg += "#{k} is #{v['status']} (#{v['details'].join('; ')})"
             end
         }
 
@@ -56,4 +71,3 @@ class CheckZimbraStatus < Sensu::Plugin::Check::CLI
         end
     end
 end
-
