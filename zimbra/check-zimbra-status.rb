@@ -56,7 +56,6 @@ class CheckZimbraStatus < Sensu::Plugin::Check::CLI
                 status[service_name]['details'].push(line.strip)
             end
         }
-        puts(status)
 
         status.each { |k,v|
             if v['status'] != "RUNNING"
