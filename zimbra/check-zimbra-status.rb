@@ -15,7 +15,7 @@
 # gem: sensu-plugin
 #
 # USAGE:
-# check-backup-size [-d /path/to/backup/dir/]
+# check-zimbra-status [-c CACHETIME]
 #
 # NOTES:
 #
@@ -30,19 +30,16 @@ require 'yaml'
 
 
 class CheckBackupSize < Sensu::Plugin::Check::CLI
-    option :dir,
-            short: '-d DIR',
-            default: "/opt/zimbra/"
     option :cache,
-            short: '-C cache',
-            description: 'How many times zmcontrol result will be cached',
+            short: '-c cache_time',
+            description: 'Status cache time, in seconds',
             default: 0
 
     def run
         msg = ""
         status_parsed = {}
         # We remove the first line describing the host
-        status = `#{config[:dir]}bin/zmcontrol status`.lines.to_a[1..-1]
+        status = `/opt/zimbra/bin/zmcontrol status`.lines.to_a[1..-1]
         # Store status in a hash
         status.each { |line|
             # Get only the service name
