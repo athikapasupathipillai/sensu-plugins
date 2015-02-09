@@ -25,18 +25,19 @@
 # for details.
 #
 
-
 require 'sensu-plugin/check/cli'
+require 'date'
 
 class CheckBackup < Sensu::Plugin::Check::CLI
     # Backup directory path
     option :dir,
             short: '-d DIR',
             default: "/opt/zimbra/bin/"
+    option :hours,
+            short: '-h HOURS',
+            default: 25
 
     def run
-        date = Time.new.strftime("%Y-%m-%d")
-
         infos_parsed = {}
         infos_without_one_words = ""
         #infos = `#{config[:dir]}zxsuite backup getBackupInfo`.lines.to_a[1..-1]
@@ -66,12 +67,18 @@ class CheckBackup < Sensu::Plugin::Check::CLI
 
         }
 
-        if infos_parsed["lastScan"].split()[0] == date
-            ok "Today's backup scan done"
+        date = DateTime.now.strftime("%s").to_i
+
+        smart_scan = `#{config[:dir]}zxsuite backup getServices |grep -A3 "smartscan-cron" |grep running`.split()
+
+        if smart_scan[1] == "false"
+            warning "Smart_scan is Not running"
+        elsif DateTime.strptime(infos_parsed["lastScan"], "%Y-%m-%d %H:%M:%S %Z").to_time.to_i+(config[:hours].to_i*60*60) > date
+            ok "Backup scan done (at least) #{config[:hours]}H from now"
         elsif infos_parsed["firstScan"] == "0"
             critical "No backup scan at all"
         else
-            warning "Today's backup NOT done"
+            critical "No backup scan since #{config[:hours]}H"
         end
     end
 end
