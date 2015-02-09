@@ -15,47 +15,35 @@
 # gem: sensu-plugin
 #
 # USAGE:
-# check-zimbra-status [-c CACHETIME]
+# check-zimbra-status
 #
 # NOTES:
 #
 # LICENSE:
-# Emeric MILLION <dev@oasiswork.fr>
+# Oasiswork <dev@oasiswork.fr>
 # Released under the same terms as Sensu (the MIT license); see LICENSE
 # for details.
 #
+# Authors:
+# Emeric MILLION <emillion@oasiswork.fr>
+# Nicolas BRISAC <nbrisac@oasiswork.fr>
 
 require 'sensu-plugin/check/cli'
 require 'yaml'
 
 
-class CheckBackupSize < Sensu::Plugin::Check::CLI
-    option :cache,
-            short: '-c cache_time',
-            description: 'Status cache time, in seconds',
-            default: 0
-
+class CheckZimbraStatus < Sensu::Plugin::Check::CLI
     def run
         msg = ""
-        status_parsed = {}
+        status = {}
         # We remove the first line describing the host
-        status = `/opt/zimbra/bin/zmcontrol status`.lines.to_a[1..-1]
-        # Store status in a hash
+        output = `su - zimbra -c '/opt/zimbra/bin/zmcontrol status'`.lines.to_a[1..-1]
+        # Store statuses in a hash
         status.each { |line|
-            # Get only the service name
-            name = line.split(/\s{2,}/)[0]
-            # Remove \t
-            name = name.tr("\t", '')
-            # Remove \n
-            name = name.tr("\n", '')
-            # Get only the service service_status
-            service_status = line.split(/\s{2,}/)[1]
-            # Remove \t
-            service_status = service_status.tr("\t", '')
-            # Remove \n
-            service_status = service_status.tr("\n", '')
+            service_name = line.split(/\s{2,}/)[0].strip
+            service_status = line.split(/\s{2,}/)[1].strip.upcase
 
-            status_parsed[name] = service_status
+            status[service_name] = service_status
             if service_status != "Running"
                 msg += "#{name} is #{service_status};"
             end
