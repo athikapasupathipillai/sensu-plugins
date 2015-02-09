@@ -52,7 +52,7 @@ class CheckZimbraStatus < Sensu::Plugin::Check::CLI
         if msg != ""
             critical msg
         else
-            ok "All services running"
+            ok
         end
     end
 end
