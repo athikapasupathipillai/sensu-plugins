@@ -39,15 +39,18 @@ class CheckZextrasBackup < Sensu::Plugin::Check::CLI
         output = `sudo -u zimbra /opt/zimbra/bin/zxsuite backup getBackupInfo`.lines
 
         output.each { |line|
+            bits = line.split
             if line.split(' ').length > 1
-                key = line.split.first.strip
-                value = line.split.last.strip
+                key = bits.first.strip
+                bits.shift
+                value = bits.joint(' ')
 
                 backup_info[key] = value
             end
         }
 
         curdate = DateTime.now.strftime("%s").to_i
+        backup_date = DateTime.strptime(backup_info["lastScan"], "%Y-%m-%d %H:%M:%S %Z").to_time.to_i+(config[:hours].to_i*60*60)
 
         smartscan_cron = `sudo -u zimbra /opt/zimbra/bin/zxsuite backup getServices | grep -A3 "smartscan-cron" | grep running`.split.last.strip.upcase
         realtime_scanner = `sudo -u zimbra /opt/zimbra/bin/zxsuite backup getProperty ZxBackup_RealTimeScanner`.split()[1].upcase
@@ -56,12 +59,12 @@ class CheckZextrasBackup < Sensu::Plugin::Check::CLI
             warning "Smartscan cron service is not running"
         elsif realtime_scanner != 'TRUE'
             warning "RealTime Scanner is disabled"
-        elsif DateTime.strptime(backup_info["lastScan"], "%Y-%m-%d %H:%M:%S %Z").to_time.to_i+(config[:hours].to_i*60*60) > date
-            ok
+        elsif backup_date < curdate
+            critical "No backup for the last #{config[:hours]}H"
         elsif backup_info["firstScan"] == "0"
             critical "No backup at all"
         else
-            critical "No backup for the last #{config[:hours]}H"
+            ok
         end
     end
 end
