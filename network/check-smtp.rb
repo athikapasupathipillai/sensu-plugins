@@ -41,17 +41,12 @@ class CheckSMTP < Sensu::Plugin::Check::CLI
             description: 'SMTP port to connect to',
             default: 25
 
-    option :helo,
-            short: '-H HELO',
-            description: 'SMTP helo to submit when connecting',
-            default: 'localhost'
-
     def run
         begin
-            Net::SMTP.start(config[':host'], config[':port'], config[':helo'])
-            ok
+            Net::SMTP.start(config[:host], config[:port], Socket.gethostname)
         rescue Exception => e
             critical "Connection failed: #{e.message}"
         end        
+        ok
     end
 end
