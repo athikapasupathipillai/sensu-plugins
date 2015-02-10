@@ -28,57 +28,40 @@
 require 'sensu-plugin/check/cli'
 require 'date'
 
-class CheckBackup < Sensu::Plugin::Check::CLI
-    # Backup directory path
-    option :dir,
-            short: '-d DIR',
-            default: "/opt/zimbra/bin/"
+class CheckZextrasBackup < Sensu::Plugin::Check::CLI
     option :hours,
             short: '-h HOURS',
+            description: 'Time delta to look for last scan',
             default: 25
 
     def run
-        infos_parsed = {}
-        infos_without_one_words = ""
-        #infos = `#{config[:dir]}zxsuite backup getBackupInfo`.lines.to_a[1..-1]
-        infos = `#{config[:dir]}zxsuite backup getBackupInfo`.lines
-        # Keep only lines not including lines with less than one word
-        infos.each { |line|
+        backup_info = {}
+        output = `sudo -u zimbra /opt/zimbra/bin/zxsuite backup getBackupInfo`.lines
+
+        output.each { |line|
             if line.split(' ').length > 1
-                infos_without_one_words += line
+                key = line.split.first.strip
+                value = line.split.last.strip
+
+                backup_info[key] = value
             end
         }
 
-        infos_without_one_words.lines.to_a[0..-1].each { |line|
-            # Get only the service name
-            name = line.split(/\s{2,}/)[1]
-            # Remove \t
-            name = name.tr("\t", '')
-            # Remove \n
-            name = name.tr("\n", '')
-            # Get only the key
-            info_key = line.split(/\s{2,}/)[2]
-            # Remove \t
-            info_key = info_key.tr("\t", '')
-            # Remove \n
-            info_key = info_key.tr("\n", '')
+        curdate = DateTime.now.strftime("%s").to_i
 
-            infos_parsed[name] = info_key
+        smartscan_cron = `sudo -u zimbra /opt/zimbra/bin/zxsuite backup getServices | grep -A3 "smartscan-cron" | grep running`.split.last.strip.upcase
+        realtime_scanner = `sudo -u zimbra /opt/zimbra/bin/zxsuite backup getProperty ZxBackup_RealTimeScanner`.split()[1].upcase
 
-        }
-
-        date = DateTime.now.strftime("%s").to_i
-
-        smart_scan = `#{config[:dir]}zxsuite backup getServices |grep -A3 "smartscan-cron" |grep running`.split()
-
-        if smart_scan[1] == "false"
-            warning "Smart_scan is Not running"
-        elsif DateTime.strptime(infos_parsed["lastScan"], "%Y-%m-%d %H:%M:%S %Z").to_time.to_i+(config[:hours].to_i*60*60) > date
-            ok "Backup scan done (at least) #{config[:hours]}H from now"
-        elsif infos_parsed["firstScan"] == "0"
-            critical "No backup scan at all"
+        if smartscan_cron != 'TRUE'
+            warning "Smartscan cron service is not running"
+        elsif realtime_scanner != 'TRUE'
+            warning "RealTime Scanner is disabled"
+        elsif DateTime.strptime(backup_info["lastScan"], "%Y-%m-%d %H:%M:%S %Z").to_time.to_i+(config[:hours].to_i*60*60) > date
+            ok
+        elsif backup_info["firstScan"] == "0"
+            critical "No backup at all"
         else
-            critical "No backup scan since #{config[:hours]}H"
+            critical "No backup for the last #{config[:hours]}H"
         end
     end
 end
