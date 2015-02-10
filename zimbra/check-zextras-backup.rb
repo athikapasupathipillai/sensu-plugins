@@ -3,7 +3,7 @@
 # check-zextras-backup
 #
 # DESCRIPTION:
-# Check Zimbra Zextras backup for Sensu.
+# Check last Zextras backup run and backup options
 #
 # OUTPUT:
 # plain text
@@ -15,15 +15,18 @@
 # gem: sensu-plugin
 #
 # USAGE:
-# check-zextras-backup [-d /path/to/backup/dir/]
+# check-zextras-backup [-h HOURS]
 #
 # NOTES:
 #
 # LICENSE:
-# Emeric MILLION <dev@oasiswork.fr>
+# Oasiswork <dev@oasiswork.fr>
 # Released under the same terms as Sensu (the MIT license); see LICENSE
 # for details.
 #
+# AUTHORS:
+# Emeric MILLION <emillion@oasiswork.fr>
+# Nicolas BRISAC <nbrisac@oasiswork.fr>
 
 require 'sensu-plugin/check/cli'
 require 'date'
