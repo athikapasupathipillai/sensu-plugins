@@ -37,7 +37,7 @@ class CheckZimbraStatus < Sensu::Plugin::Check::CLI
         msg = ""
         status = {}
         # We remove the first line describing the host
-        output = `su - zimbra -c '/opt/zimbra/bin/zmcontrol status'`.lines.to_a[1..-1]
+        output = `sudo -u zimbra /opt/zimbra/bin/zmcontrol status`.lines.to_a[1..-1]
         # Store statuses in a hash
         service_name = ''
         output.each { |line|
