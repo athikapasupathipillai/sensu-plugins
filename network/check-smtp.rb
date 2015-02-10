@@ -31,7 +31,7 @@
 require 'sensu-plugin/check/cli'
 require 'net/smtp'
 
-class CheckZextrasBackup < Sensu::Plugin::Check::CLI
+class CheckSMTP < Sensu::Plugin::Check::CLI
     option :host,
             short: '-h HOST',
             description: 'SMTP host to connect to'
