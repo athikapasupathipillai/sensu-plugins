@@ -29,7 +29,7 @@
 # Nicolas BRISAC <nbrisac@oasiswork.fr>
 
 require 'sensu-plugin/check/cli'
-require 'date'
+require 'net/smtp'
 
 class CheckZextrasBackup < Sensu::Plugin::Check::CLI
     option :host,
