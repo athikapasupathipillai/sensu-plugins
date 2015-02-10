@@ -43,7 +43,7 @@ class CheckZextrasBackup < Sensu::Plugin::Check::CLI
             if line.split(' ').length > 1
                 key = bits.first.strip
                 bits.shift
-                value = bits.joint(' ')
+                value = bits.join(' ')
 
                 backup_info[key] = value
             end
