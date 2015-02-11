@@ -65,6 +65,7 @@ class CheckSMTP < Sensu::Plugin::Check::CLI
                 smtp.enable_starttls(ctx)
             end
             smtp.start(Socket.gethostname)
+            smtp.finish()
         rescue Exception => e
             critical "Connection failed: #{e.message}"
         end        
