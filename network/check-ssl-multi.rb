@@ -57,7 +57,7 @@ class CheckSSLMulti < Sensu::Plugin::Check::CLI
          proc: proc(&:to_i),
          default: 14
 
-  option :host,
+  option :hosts,
          description: 'Hostnames of servers to check',
          short: '-h',
          long: '--hosts HOST',
