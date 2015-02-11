@@ -39,8 +39,8 @@ require 'date'
 require 'openssl'
 require 'socket'
 
-class CheckSSLHost < Sensu::Plugin::Check::CLI
-  check_name 'check_ssl_host'
+class CheckSSLMulti < Sensu::Plugin::Check::CLI
+  check_name 'check_ssl_multi'
 
   option :critical,
          description: 'Return critical this many days before cert expiry',
@@ -58,13 +58,13 @@ class CheckSSLHost < Sensu::Plugin::Check::CLI
          default: 14
 
   option :host,
-         description: 'Hostname of server to check',
+         description: 'Hostnames of servers to check',
          short: '-h',
-         long: '--host HOST',
+         long: '--hosts HOST',
          required: true
 
   option :port,
-         description: 'Port on server to check',
+         description: 'Port on servers to check',
          short: '-p',
          long: '--port PORT',
          default: 443
