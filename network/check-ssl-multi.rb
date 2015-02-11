@@ -143,14 +143,20 @@ class CheckSSLMulti < Sensu::Plugin::Check::CLI
     config[:hosts].split(',').each { |host|
       chain = get_cert_chain(host, config[:port])
 
+      ret = 0
+      msg = ''
       ret, msg = verify_hostname(chain[0], host) unless config[:skip_hostname_verification]
       results['hostname']['code'] = ret if ret > results['hostname']['code']
       results['hostname']['message'] += "#{msg}; " if msg != ''
 
+      ret = 0
+      msg = ''
       ret, msg = verify_certificate_chain(chain, host) unless config[:skip_chain_verification]
       results['chain']['code'] = ret if ret > results['chain']['code']
       results['chain']['message'] += "#{msg}; " if msg != ''
 
+      ret = 0
+      msg = ''
       ret, msg = verify_expiry(chain[0], host)
       results['expiry']['code'] = ret if ret > results['expiry']['code']
       results['expiry']['message'] += "#{msg}; " if msg != ''
