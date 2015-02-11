@@ -126,17 +126,17 @@ class CheckSSLMulti < Sensu::Plugin::Check::CLI
 
   def run
     results = {
-      'hostname': {
-        'code': 0,
-        'message': ''
+      'hostname' => {
+        'code' => 0,
+        'message' => ''
       },
-      'chain': {
-        'code': 0,
-        'message': ''
+      'chain' => {
+        'code' => 0,
+        'message' => ''
       },
-      'expiry': {
-        'code': 0,
-        'message': ''
+      'expiry' => {
+        'code' => 0,
+        'message' => ''
       }
     }
 
