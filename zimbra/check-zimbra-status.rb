@@ -57,10 +57,11 @@ class CheckZimbraStatus < Sensu::Plugin::Check::CLI
             end
         }
 
+        ret = 0
         status.each { |k,v|
             if v['status'] != 'RUNNING'
                 msg += "#{k} is #{v['status']} (#{v['details'].join('; ')});"
-                if k == 'stats'
+                if k == 'stats' and ret != 2
                     ret = 1
                 else
                     ret = 2
@@ -68,7 +69,7 @@ class CheckZimbraStatus < Sensu::Plugin::Check::CLI
             end
         }
 
-        if msg != ""
+        if ret > 0
             if ret == 1
                 warning msq
             else
