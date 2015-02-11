@@ -34,7 +34,7 @@ require 'net/smtp'
 class CheckSMTP < Sensu::Plugin::Check::CLI
     option :host,
             short: '-h HOST',
-            description: 'SMTP host to connect to'
+            description: 'SMTP host to connect to',
             required: true
 
     option :port,
