@@ -35,15 +35,25 @@ class CheckSMTP < Sensu::Plugin::Check::CLI
     option :host,
             short: '-h HOST',
             description: 'SMTP host to connect to'
+            required: true
 
     option :port,
             short: '-p PORT',
             description: 'SMTP port to connect to',
             default: 25
 
+    option :tls,
+            long: '--tls',
+            description: 'Enable STARTTLS',
+            boolean: true
+
     def run
         begin
-            Net::SMTP.start(config[:host], config[:port], Socket.gethostname)
+            if config[:tls]
+                Net::SMTP.enable_starttls(OpenSSL::SSL::VERIFY_PEER)
+            end
+            Net::SMTP.start(config[:host], config[:port], Socket.gethostname) do |smtp|
+            end
         rescue Exception => e
             critical "Connection failed: #{e.message}"
         end        
