@@ -25,7 +25,6 @@
 # for details.
 #
 # AUTHORS:
-# Emeric MILLION <emillion@oasiswork.fr>
 # Nicolas BRISAC <nbrisac@oasiswork.fr>
 
 require 'sensu-plugin/check/cli'
@@ -47,15 +46,29 @@ class CheckSMTP < Sensu::Plugin::Check::CLI
             description: 'Enable STARTTLS',
             boolean: true
 
+    option :tls_verify,
+            long: '--verify-peer-cert',
+            description: 'Verify peer certificate during TLS session',
+            boolean: true
+
     def run
+        smtp = Net::SMTP.new(config[:host], config[:port])
+        ctx = OpenSSL::SSL::SSLContext.new
+        if config[:tls_verify]
+            ctx.verify_mode = OpenSSL::SSL::VERIFY_PEER
+        else
+            ctx.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        end
+
         begin
             if config[:tls]
-                Net::SMTP.enable_starttls(OpenSSL::SSL::VERIFY_PEER)
+                smtp.enable_starttls(ctx)
             end
-            Net::SMTP.start(config[:host], config[:port], Socket.gethostname)
+            smtp.start(Socket.gethostname)
         rescue Exception => e
             critical "Connection failed: #{e.message}"
         end        
+
         ok
     end
 end
