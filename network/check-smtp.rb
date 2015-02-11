@@ -52,8 +52,7 @@ class CheckSMTP < Sensu::Plugin::Check::CLI
             if config[:tls]
                 Net::SMTP.enable_starttls(OpenSSL::SSL::VERIFY_PEER)
             end
-            Net::SMTP.start(config[:host], config[:port], Socket.gethostname) do |smtp|
-            end
+            Net::SMTP.start(config[:host], config[:port], Socket.gethostname)
         rescue Exception => e
             critical "Connection failed: #{e.message}"
         end        
