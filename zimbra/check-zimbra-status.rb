@@ -71,7 +71,7 @@ class CheckZimbraStatus < Sensu::Plugin::Check::CLI
 
         if ret > 0
             if ret == 1
-                warning msq
+                warning msg
             else
                 critical msg
             end
