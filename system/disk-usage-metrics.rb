@@ -59,7 +59,7 @@ class DiskUsageMetrics < Sensu::Plugin::Metric::CLI::Graphite
   option :scheme,
          description: 'Metric naming scheme, text to prepend to .$parent.$child',
          long: '--scheme SCHEME',
-         default: "#{Socket.gethostname}"
+         default: "#{sensu_name}"
 
   option :ignore_mnt,
          description: 'Ignore mounts matching pattern(s)',
