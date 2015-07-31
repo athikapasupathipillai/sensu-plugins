@@ -49,7 +49,7 @@
 require 'rubygems' if RUBY_VERSION < '1.9.0'
 require 'sensu-plugin/metric/cli'
 require 'socket'
-require 'socket'
+require 'json'
 
 class DiskUsageMetrics < Sensu::Plugin::Metric::CLI::Graphite
   client_conf = File.read('/etc/sensu/conf.d/client.json')
