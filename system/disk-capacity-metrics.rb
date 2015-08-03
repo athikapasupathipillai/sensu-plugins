@@ -67,7 +67,7 @@ class DiskCapacity < Sensu::Plugin::Metric::CLI::Graphite
             disk: {
               "#{fs}.used" => used,
               "#{fs}.avail" => avail,
-              "#{fs}.capacity" => capacity.gsub('%', '')
+              "#{fs}.capacity" => _blocks
             }
           }
           metrics.each do |parent, children|
@@ -81,31 +81,6 @@ class DiskCapacity < Sensu::Plugin::Metric::CLI::Graphite
       end
     end
 
-    # Get inode capacity metrics
-    `df -Pi`.split("\n").drop(1).each do |line|
-      begin
-        fs, _inodes, used, avail, capacity, _mnt = line.split
-
-        timestamp = Time.now.to_i
-        if fs.match('/dev')
-          fs = fs.gsub('/dev/', '')
-          metrics = {
-            disk: {
-              "#{fs}.iused" => used,
-              "#{fs}.iavail" => avail,
-              "#{fs}.icapacity" => capacity.gsub('%', '')
-            }
-          }
-          metrics.each do |parent, children|
-            children.each do |child, value|
-              output [config[:scheme], parent, child].join('.'), value, timestamp
-            end
-          end
-        end
-      rescue
-        unknown "malformed line from df: #{line}"
-      end
-    end
     ok
   end
 end
