@@ -40,7 +40,7 @@ class DiskCapacity < Sensu::Plugin::Metric::CLI::Graphite
   option :scheme,
          description: 'Metric naming scheme, text to prepend to .$parent.$child',
          long: '--scheme SCHEME',
-         default: "#{sensu_name}.disk"
+         default: "#{sensu_name}"
 
   def convert_integers(values)
     values.each_with_index do |value, index|
@@ -62,12 +62,11 @@ class DiskCapacity < Sensu::Plugin::Metric::CLI::Graphite
 
         timestamp = Time.now.to_i
         if fs.match('/dev')
-          fs = fs.gsub('/dev/', '')
           metrics = {
             disk: {
-              "#{fs}.used" => used,
-              "#{fs}.avail" => avail,
-              "#{fs}.capacity" => _blocks
+              "#{_mnt}.used" => used,
+              "#{_mnt}.avail" => avail,
+              "#{_mnt}.capacity" => _blocks
             }
           }
           metrics.each do |parent, children|
