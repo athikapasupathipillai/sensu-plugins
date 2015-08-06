@@ -64,9 +64,9 @@ class DiskCapacity < Sensu::Plugin::Metric::CLI::Graphite
         if fs.match('/dev')
           metrics = {
             disk: {
-              "#{_mnt}.used" => used,
-              "#{_mnt}.avail" => avail,
-              "#{_mnt}.capacity" => _blocks
+              "#{_mnt}.used,mount_dir=#{_mnt}" => used,
+              "#{_mnt}.avail,mount_dir=#{_mnt}" => avail,
+              "#{_mnt}.capacity,mount_dir=#{_mnt}" => _blocks
             }
           }
           metrics.each do |parent, children|
