@@ -42,7 +42,7 @@ class NetIFMetrics < Sensu::Plugin::Metric::CLI::Graphite
 
   def run
     # #YELLOW
-    `sar -n DEV 1 1 | grep Moyenne | grep -v IFACE`.each_line do |line|  # rubocop:disable Style/Next
+    `sar -n DEV 1 1 | egrep "Average|Moyenne" | grep -v IFACE`.each_line do |line|  # rubocop:disable Style/Next
       stats = line.split(/\s+/)
       unless stats.empty?
         stats.shift
