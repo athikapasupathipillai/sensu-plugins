@@ -27,6 +27,10 @@
 # AUTHORS:
 # Emeric MILLION <emillion@oasiswork.fr>
 
+# Enforce UTF8 to avoid 'invalid byte sequence in US-ASCII'
+Encoding.default_external = Encoding::UTF_8
+Encoding.default_internal = Encoding::UTF_8
+
 require 'sensu-plugin/check/cli'
 require 'date'
 
