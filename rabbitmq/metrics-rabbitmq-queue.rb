@@ -104,15 +104,15 @@ class RabbitMQMetrics < Sensu::Plugin::Metric::CLI::Graphite
       queue['messages'] ||= 0
       drain_time = queue['messages'] / queue['backing_queue_status']['avg_egress_rate']
       drain_time = 0 if drain_time.nan? || drain_time.infinite? # 0 rate with 0 messages is 0 time to drain
-      output([config[:scheme], queue['name'], 'drain_time'].join('.'), drain_time.to_i, timestamp)
+      output([config[:scheme], queue['name'], 'drain_time' + ',queue_name='+queue['name']].join('.'), drain_time.to_i, timestamp)
 
       %w(messages consumers).each do |metric|
-        output([config[:scheme], queue['name'], metric].join('.'), queue[metric], timestamp)
+        output([config[:scheme], queue['name'], metric + ',queue_name='+queue['name']].join('.'), queue[metric], timestamp)
       end
 
       # fetch the average egress rate of the queue
       rate = format('%.4f', queue['backing_queue_status']['avg_egress_rate'])
-      output([config[:scheme], queue['name'], 'avg_egress_rate'].join('.'), rate, timestamp)
+      output([config[:scheme], queue['name'], 'avg_egress_rate' + ',queue_name='+queue['name']].join('.'), rate, timestamp)
     end
     ok
   end
