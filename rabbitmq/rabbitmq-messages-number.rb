@@ -61,6 +61,10 @@ class RabbitMQMessagesNumber < Sensu::Plugin::Check::CLI
          description: 'Regular expression for filtering queues',
          long: '--filter REGEX'
 
+  option :min_limit,
+         description: 'Minimum messages number before alerting',
+         long: '--min-limit MIN_LIMIT'
+
   option :ssl,
          description: 'Enable SSL for connection to the API',
          long: '--ssl',
@@ -98,15 +102,17 @@ class RabbitMQMessagesNumber < Sensu::Plugin::Check::CLI
 
       tmp_file = '/tmp/sensu_' + queue['name'] + '.tmp'
 
-      current_value = queue['messages'].to_s
+      current_value = queue['messages'].to_i
+      min_limit = config[:min_limit].to_i
 
       if File.exist?(tmp_file) then
           previous_value = File.read(tmp_file)
 
-          if current_value == '0' then
-              message 'queue is empty'
+          if current_value <= min_limit then
+              message 'queue is under ' + config[:min_limit] + ' (' + current_value.to_s + ')'
+              File.open(tmp_file, 'w') { |file| file.write(current_value) }
           elsif previous_value == current_value then
-              message 'queue still at ' + current_value
+              message 'queue still at ' + current_value.to_i
               critical
           else
               File.open(tmp_file, 'w') { |file| file.write(current_value) }
