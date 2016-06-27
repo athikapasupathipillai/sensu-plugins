@@ -36,7 +36,7 @@ class CheckBackup < Sensu::Plugin::Check::CLI
             default: "/opt/zimbra/backup/"
 
     def run
-        date = `date -d-1day +%Y%m%d`.strip
+        date = Time.new.strftime("%Y/%m/%d")
 
         backup_info = {}
         output = `sudo -u zimbra /opt/zimbra/bin/zmbackupquery |head -n 7`.lines
@@ -53,6 +53,10 @@ class CheckBackup < Sensu::Plugin::Check::CLI
               backup_info[key] = value
             end
         }
+
+        if backup_info["Started"].split(' ')[1] != date
+          warning "No backup since " + backup_info["Started"]
+        end
 
         if backup_info["Status"] == 'completed'
             ok "Backup " + backup_info["Label"] + " ended successfully " + backup_info["Ended"]
