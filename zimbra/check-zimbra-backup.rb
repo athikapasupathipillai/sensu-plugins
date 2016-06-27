@@ -26,8 +26,6 @@
 # for details.
 #
 
-
-require 'nokogiri'
 require 'sensu-plugin/check/cli'
 
 
@@ -38,24 +36,29 @@ class CheckBackup < Sensu::Plugin::Check::CLI
             default: "/opt/zimbra/backup/"
 
     def run
-        date = Time.new.strftime("%Y%m%d")
-        
-        daily_bak_dir = Dir[config[:dir]+"sessions/*"+date+"*"][0]
-        
-        if daily_bak_dir.nil? or daily_bak_dir.empty?
-            critical "No backup today in "+config[:dir]
+        date = `date -d-1day +%Y%m%d`.strip
 
-        else
-            daily_bak_session = daily_bak_dir+"/session.xml"
-        
-            @doc = Nokogiri::XML(File.read(daily_bak_session))
-        
-            begin
-                msg = @doc.xpath('//xmlns:message')[0].to_str.split(":")[1]
-                warning msg
-            rescue
-                ok "No error on backup"
+        backup_info = {}
+        output = `sudo -u zimbra /opt/zimbra/bin/zmbackupquery |head -n 7`.lines
+
+        output.each { |line|
+            bits = line.split(': ')
+
+            if line.split(' ').length > 1
+
+              key = bits.first.strip
+              bits.shift
+              value = bits.join(' ').strip
+
+              backup_info[key] = value
             end
+        }
+
+        if backup_info["Status"] == 'completed'
+            ok "Backup " + backup_info["Label"] + " ended successfully " + backup_info["Ended"]
+        else
+            critical "Backup " + backup_info["Label"] + " fail"
+
         end
     end
 end
