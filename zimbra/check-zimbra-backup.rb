@@ -61,7 +61,7 @@ class CheckBackup < Sensu::Plugin::Check::CLI
         if backup_info["Status"] == 'completed'
             ok "Backup " + backup_info["Label"] + " ended successfully " + backup_info["Ended"]
         else
-            critical "Backup " + backup_info["Label"] + " fail"
+            critical "Backup " + backup_info["Label"] + " " + backup_info["Status"]
 
         end
     end
