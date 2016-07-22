@@ -38,11 +38,11 @@ class CheckZextrasLicences < Sensu::Plugin::Check::CLI
     option :critical,
             short: '-c CRITICAL',
             description: 'How many licences left before throw CRITICAL error',
-            default: 2
+            default: -1
     option :warning,
             short: '-w WARNING',
             description: 'How many licences left before throw WARING error',
-            default: 5
+            default: 2
 
     def run
         licences_info = {}
