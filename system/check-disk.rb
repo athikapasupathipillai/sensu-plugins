@@ -100,14 +100,15 @@ class CheckDisk < Sensu::Plugin::Check::CLI
         next if config[:ignoremnt] && config[:ignoremnt].include?(mnt)
         next if config[:ignoreline] && config[:ignoreline].find { |x| line.match(x) }
         puts line if config[:debug]
+        avail_in_gb = (_avail.to_f / 1024 / 1024).round(2)
       rescue
         unknown "malformed line from df: #{line}"
       end
       @line_count += 1
       if capacity.to_i >= config[:crit]
-        @crit_fs << "#{mnt} #{capacity}"
+        @crit_fs << "#{mnt} #{capacity} (#{avail_in_gb}GB free)"
       elsif capacity.to_i >= config[:warn]
-        @warn_fs <<  "#{mnt} #{capacity}"
+        @warn_fs <<  "#{mnt} #{capacity} (#{avail_in_gb}GB free)"
       end
     end
 
