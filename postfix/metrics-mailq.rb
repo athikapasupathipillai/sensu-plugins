@@ -25,6 +25,10 @@ require 'sensu-plugin/metric/cli'
 require 'socket'
 
 class PostfixMailqMetrics < Sensu::Plugin::Metric::CLI::Graphite
+  client_conf = File.read('/etc/sensu/conf.d/client.json')
+  client_conf_hash = JSON.parse(client_conf)
+  sensu_name = client_conf_hash['client']['name']
+  
   option :path,
          short: '-p MAILQ_PATH',
          long: '--path MAILQ_PATH',
@@ -35,7 +39,7 @@ class PostfixMailqMetrics < Sensu::Plugin::Metric::CLI::Graphite
          description: 'Metric naming scheme, text to prepend to metric',
          short: '-s SCHEME',
          long: '--scheme SCHEME',
-         default: "#{Socket.gethostname}.tcp"
+         default: "#{sensu_name}"
 
   def run
     timestamp = Time.now.to_i
@@ -46,7 +50,7 @@ class PostfixMailqMetrics < Sensu::Plugin::Metric::CLI::Graphite
     else
       num_messages = queue.split(' ')[4].to_i
     end
-    graphite_name = config[:scheme] + '.postfixMailqCount'
+    graphite_name = config[:scheme] + '.postfix.mailq.count'
     output "#{graphite_name}", num_messages, timestamp
     ok
   end
