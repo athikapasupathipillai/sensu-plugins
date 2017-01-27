@@ -63,8 +63,7 @@ class LoadStat < Sensu::Plugin::Metric::CLI::Graphite
   end
 
   def run
-    result = `uptime`.gsub(',', '').split(' ')
-    result = result[-3..-1]
+    result = File.read('/proc/loadavg').split.take(3)
 
     timestamp = Time.now.to_i
     if config[:per_core]
