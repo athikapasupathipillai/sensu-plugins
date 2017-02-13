@@ -121,8 +121,13 @@ class ZeXtrasLicenses(SensuPluginCheck):
 
         expired = req[
             'response'][zimbra_server]['response']['expired']
-        expired_timestamp = int(req[
-            'response'][zimbra_server]['response']['dateEnd']) / 1000
+        try:
+            expired_timestamp = int(req[
+                'response'][zimbra_server]['response']['dateEnd']) / 1000
+        except KeyError:
+            expired_timestamp = int(req[
+                'response'][zimbra_server]['response']['maintenanceEnd']
+            ) / 1000
         expired_date = datetime.fromtimestamp(expired_timestamp).strftime(
             '%Y-%m-%d %H:%M:%S')
 
