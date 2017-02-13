@@ -135,7 +135,7 @@ class ZeXtrasLicenses(SensuPluginCheck):
                 'response'][zimbra_server]['response']['licensedUsers']
 
             if licensed_users == 'unlimited':
-                self.ok()
+                self.ok('Unlimited licenses')
             else:
                 licenses_left = int(licensed_users) - total_accounts
 
@@ -144,7 +144,7 @@ class ZeXtrasLicenses(SensuPluginCheck):
                 elif licenses_left <= self.options.warning:
                     self.warning('{} licenses left'.format(licenses_left))
                 else:
-                    self.ok()
+                    self.ok('{} licenses left'.format(licenses_left))
 
 if __name__ == "__main__":
     f = ZeXtrasLicenses()
