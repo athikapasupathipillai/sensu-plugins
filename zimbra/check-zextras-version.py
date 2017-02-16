@@ -122,13 +122,13 @@ class ZeXtrasVersion(SensuPluginCheck):
         actual_version = req[
             'response'][zimbra_server]['response']['version']
 
-        if StrictVersion(actual_version) <= StrictVersion(
+        if StrictVersion(actual_version) < StrictVersion(
                 self.options.critical):
             self.critical('Actual version : {}. Needed : {}'.format(
                 actual_version,
                 self.options.critical
             ))
-        elif StrictVersion(actual_version) <= StrictVersion(
+        elif StrictVersion(actual_version) < StrictVersion(
                 self.options.warning):
             self.warning('Actual version : {}. Needed : {}'.format(
                 actual_version,
